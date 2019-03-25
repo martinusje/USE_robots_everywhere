@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import serial, time
 
-arduino = serial.Serial('COM3', 9600, timeout=.1)
+arduino = serial.Serial('COM9', 9600, timeout=.1)
 time.sleep(1) #give the connection a second to settle
 
 framewidth = 720
@@ -73,18 +73,12 @@ classes = None
 with open('classes.names', 'r') as f:
     classes = [line.strip() for line in f.readlines()]
 
-class_ids = []
-confidences = []
-boxes = []
-conf_threshold = 0.5
-nms_threshold = 0.4
-
 while 1:
     hasFrame, image = cap.read()
 
     if image is not None:
         #Flip image for rotated camera
-        image = cv2.flip(image, -1)
+        #image = cv2.flip(image, -1)
 
         Width = image.shape[1]
         Height = image.shape[0]
@@ -97,6 +91,12 @@ while 1:
         net.setInput(blob)
 
         outs = net.forward(get_output_layers(net))
+
+        class_ids = []
+        confidences = []
+        boxes = []
+        conf_threshold = 0.5
+        nms_threshold = 0.4
 
         for out in outs:
             for detection in out:
