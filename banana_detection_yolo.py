@@ -68,6 +68,17 @@ cap.set(4, frameheight) # Set the Vertical resolution
 net = cv2.dnn.readNet('yolov3_320.weights', 'yolov3.cfg')
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
+classes = None
+
+with open('classes.names', 'r') as f:
+    classes = [line.strip() for line in f.readlines()]
+
+class_ids = []
+confidences = []
+boxes = []
+conf_threshold = 0.5
+nms_threshold = 0.4
+
 while 1:
     hasFrame, image = cap.read()
 
@@ -79,11 +90,6 @@ while 1:
         Height = image.shape[0]
         scale = 0.00392
 
-        classes = None
-
-        with open('classes.names', 'r') as f:
-            classes = [line.strip() for line in f.readlines()]
-
         COLORS = np.random.uniform(0, 255, size=(len(classes), 3))
 
         blob = cv2.dnn.blobFromImage(image, scale, (320,320), (0,0,0), True, crop=False)
@@ -91,12 +97,6 @@ while 1:
         net.setInput(blob)
 
         outs = net.forward(get_output_layers(net))
-
-        class_ids = []
-        confidences = []
-        boxes = []
-        conf_threshold = 0.5
-        nms_threshold = 0.4
 
         for out in outs:
             for detection in out:
