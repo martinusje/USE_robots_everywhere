@@ -22,7 +22,7 @@ Servo yaw;
 // twelve servo objects can be created on most boards
 
 int pos = 0;
-int pos_yaw = 0;    // variable to store the servo position
+int pos_yaw = 90;    // variable to store the servo position
 int pos_pitch = 0;
 
 int increment = 10;
@@ -34,6 +34,7 @@ void setup() {
   yaw.attach(9);
 
   pitch.write(0);
+  delay(500);
   yaw.write(90);
   
   // initialize the serial port:
