@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import serial, time
 
-arduino = serial.Serial('COM9', 9600, timeout=.1)
+arduino = serial.Serial('COM7', 9600, timeout=.1)
 time.sleep(1) #give the connection a second to settle
 
 framewidth = 720
@@ -34,21 +34,23 @@ def draw_prediction(img, class_id, confidence, x, y, x_plus_w, y_plus_h):
 
     label = str(classes[class_id])
 
-    if(label == 'banana'):
+    if(label == 'person'):
         #Banana detected
         print(label + " detected")
         # draw the label in the frame
         threshold = 0.15
-        if(x_plus_w > (framewidth*(1-threshold))):
+        if(x_plus_w > (framewidth*(1-threshold)) and not x < (framewidth*threshold)):
             __draw_label(img, 1, '>>>', (framewidth - 40,frameheight/2), (255,0,0))
             arduino.write("right")
-        if(x < (framewidth*threshold)):
+        if(x < (framewidth*threshold) and not x_plus_w > (framewidth*(1-threshold))):
             __draw_label(img, 1, '<<<', (40,frameheight/2), (255,0,0))
             arduino.write("left")
-        if(y_plus_h > (frameheight*(1-threshold))):
+        if(y_plus_h > (frameheight*(1-threshold)) and not y < (frameheight*threshold) ):
             __draw_label(img, 1, 'Down', (framewidth/2,frameheight - 40), (255,0,0))
-        if(y < (frameheight*threshold)):
+            arduino.write("down")
+        if(y < (frameheight*threshold) and not y_plus_h > (frameheight*(1-threshold))):
             __draw_label(img, 1, 'UP', (framewidth/2,40), (255,0,0))
+            arduino.write("up")
 
     color = COLORS[class_id]
 
@@ -60,7 +62,7 @@ winName = 'Deep learning object detection in OpenCV'
 cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
 
 # get external camera attached to usb
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_AUTOFOCUS, 0) # turn the autofocus off
 cap.set(3, framewidth) # set the Horizontal resolution
 cap.set(4, frameheight) # Set the Vertical resolution
@@ -78,7 +80,7 @@ while 1:
 
     if image is not None:
         #Flip image for rotated camera
-        #image = cv2.flip(image, -1)
+        image = cv2.flip(image, -1)
 
         Width = image.shape[1]
         Height = image.shape[0]
