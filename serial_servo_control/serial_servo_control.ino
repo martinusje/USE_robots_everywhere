@@ -25,7 +25,7 @@ int pos = 0;
 int pos_yaw = 90;    // variable to store the servo position
 int pos_pitch = 0;
 
-int increment = 10;
+int increment = 8;
 
 String readString;
 
