@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import serial, time
 
-arduino = serial.Serial('COM7', 9600, timeout=.1)
+arduino = serial.Serial('COM9', 9600, timeout=.1)
 time.sleep(1) #give the connection a second to settle
 
 framewidth = 720
@@ -62,7 +62,7 @@ winName = 'Deep learning object detection in OpenCV'
 cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
 
 # get external camera attached to usb
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_AUTOFOCUS, 0) # turn the autofocus off
 cap.set(3, framewidth) # set the Horizontal resolution
 cap.set(4, frameheight) # Set the Vertical resolution
@@ -131,7 +131,7 @@ while 1:
     else:
         print("Camera stream not loaded properly")
 
-    k = cv2.waitKey(30) & 0xff
+    k = cv2.waitKey(50) & 0xff
     if k == 27:
         break
 
